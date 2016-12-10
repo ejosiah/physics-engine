@@ -9,8 +9,17 @@
 #ifndef opengl_Camera_h
 #define opengl_Camera_h
 
-#include <OpenGL/OpenGL.h>
-#include <GLUT/GLUT.h>
+
+#ifdef __APPLE__
+    #include <OpenGL/OpenGL.h>
+    #include <GLUT/GLUT.h>
+#else
+#  include <GL/glew.h>
+#  include <GL/freeglut.h>
+#  include <GL/glext.h>
+#pragma comment(lib, "glew32.lib")
+#endif
+
 #include <initializer_list>
 #include <iostream>
 #include "core.h"
@@ -20,8 +29,8 @@ using namespace physics;
 struct Projection{
     real fov;
     real aspectRatio;
-    real near;
-    real far;
+    real _near;
+    real _far;
 };
 
 class Camera{
@@ -47,8 +56,8 @@ public:
     void set(const Projection& p){
         _fov = p.fov;
         _aspectRatio = p.aspectRatio;
-        _zNear = p.near;
-        _zFar = p.far;
+        _zNear = p._near;
+        _zFar = p._far;
         
     }
     
@@ -77,6 +86,10 @@ public:
     static bool log;
     
     virtual void move(){
+        using namespace std;
+//                    cout << "position: " << _position << endl;
+//                    cout << "target" << _target << endl;
+                 //   cout << "position" << _position << endl << endl;
         gluLookAt(_position.x, _position.y, _position.z
                   , _target.x, _target.y, _target.z
                   , _up.x, _up.y, _up.z);
@@ -148,19 +161,19 @@ private:
     Vector _translation;
     
 public:
-    virtual void setup(const Projection& projection, const Vector& position, real speed){
+    virtual void setup(const Projection& projection, const Vector& position, real speed = 100, const Vector& look = Vector{}){
         set(projection);
         _position = position;
-        Vector look = _position;
-        look.invert();
-        look.normalize();
+        _look = look;
+        _look.invert();
+        _look.normalize();
         _speed = speed;
         
         real yaw = 0.0f;
         real pitch = 0.0f;
-        if(fabs(look.length() - 0) > epsilon){
-            yaw =  (real_atan2(look.z, look.x) + M_PI)/DEG_TO_RAD;
-            pitch = (real_asin(look.y))/DEG_TO_RAD;
+        if(fabs(_look.length() - 0) > epsilon){
+            yaw =  (real_atan2(_look.z, _look.x) + M_PI)/DEG_TO_RAD;
+            pitch = (real_asin(_look.y))/DEG_TO_RAD;
         }
         
         rotate(yaw, pitch,0);

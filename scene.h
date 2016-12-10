@@ -9,9 +9,23 @@
 #ifndef opengl_scene_h
 #define opengl_scene_h
 
+
+#ifdef __APPLE__
 #include <OpenGL/OpenGL.h>
 #include <GLUT/GLUT.h>
+#else
+#  include <GL/glew.h>
+#  include <GL/freeglut.h>
+#  include <GL/glext.h>
+#pragma comment(lib, "glew32.lib")
+#endif
+
+
 #include <map>
+#include <unordered_map>
+#include <vector>
+#include <string>
+
 #include "core.h"
 #include "Particle.h"
 #include "forces.h"
@@ -21,8 +35,6 @@
 using namespace physics;
 
 ForceRegistry forceRegistry;
-
-class Scene;
 
 class SceneObject{
 public:
@@ -34,8 +46,8 @@ public:
 
 class ParticleSceneObject : public SceneObject, public Particle{};
 
-using SceneObjects = std::map<const char*, SceneObject*>;
-
+using SceneObjects = std::unordered_map<const char*, SceneObject*>;
+using BigInt = long long int;
 
 class Scene{
 protected:
@@ -49,6 +61,8 @@ protected:
     int _height;
     real fov=60;
     real cl = 50;
+    int fps;
+    BigInt frames;
 
     
 protected:
@@ -117,8 +131,13 @@ public:
         camera->move();
         drawCrosshairs();
         display();
+        frames++;
         debug();
 
+    }
+    
+    void updateFrameData(int elapsedTime){
+        fps = frames/elapsedTime;
     }
     
     virtual void resize(int w, int h){
@@ -132,7 +151,7 @@ public:
     
     void keyPress(unsigned char key, int x, int y){
         camera->keyPress(key, x, y);
-        if(key == ' ') mouse.useFitering = !mouse.useFitering;
+        if(key == 'f') mouse.useFitering = !mouse.useFitering;
         onKeyPress(key, x, y);
     }
     
@@ -216,6 +235,8 @@ public:
         size_t n = objects.size();
         std::string text = "object count: " + std::to_string(n);
         renderText(10, _height - 10, text.c_str());
+        text = "fps: " + std::to_string(fps);
+        renderText(10, _height - 25, text.c_str());
     }
     
     static void addObject(SceneObject* object){
@@ -228,8 +249,7 @@ public:
     }
     
     static void remove(SceneObject* object){
-        const char* key = object->name();
-        objects.erase(key);
+        objects.erase(object->name());
     }
     
 };

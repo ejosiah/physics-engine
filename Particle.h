@@ -103,20 +103,20 @@ namespace physics{
         
         
         void integrate(real time){
+            
             using namespace std;
             if(inverseMass <= 0) return;
             
-            _position += _velocity * time;
+            _position.addScaled(_velocity, time);
+
+           _acceleration.addScaled(accumulatedForce, inverseMass);
             
-           _acceleration  += (accumulatedForce * inverseMass);
-            _velocity += _acceleration * time;
+            _velocity.addScaled(_acceleration, time);
             
             _velocity *= real_pow(_damping, time);
             
-//            cout << "acceleration: " << _acceleration << endl;
-//            cout << "velocity" << _velocity << endl;
-//            cout << "position" << _position << endl << endl;
-            
+
+         
             accumulatedForce.clear();
         }
         

@@ -79,6 +79,13 @@ namespace physics {
             return Vector(x * s, y * s, z * s);
         }
         
+        Vector& addScaled(const Vector& v, real s){
+            x += v.x * s;
+            y += v.y * s;
+            z += v.z * s;
+            return *this;
+        }
+        
         bool operator==(const Vector& v){
             if (this == &v) {
                 return true;

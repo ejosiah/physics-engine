@@ -33,26 +33,21 @@ public:
     Type type = UNUSED;
     real startTime;
     
-    ~Ammo(){
-        std::cout << "calling destructor for" << _name << std::endl;
-    }
-    
     virtual const char* name() override{
         return _name.c_str();
     }
     virtual void draw() override{
         glPushMatrix();
         glTranslatef(x(), y(), -z());
-        // bullet
-        glColor3f(0, 0, 0);
-        glutSolidSphere(2.5, 10, 10);
+        glColor3f(0.6, 0.6, 0.6);
+        glutSolidSphere(2, 10, 10);
         glPopMatrix();
         
         glPushMatrix();
         glColor3f(0.5, 0.5, 0.5);
         glTranslatef(x(), 0, -z());
         glScalef(1, 0.1, 1);
-        glutSolidSphere(2.5, 10, 10);
+        glutSolidSphere(4, 10, 10);
         glPopMatrix();
         
         
@@ -62,7 +57,6 @@ public:
     virtual void update(float elapsedTime) override{
         if(y() < 0 || z() > 1000 or startTime+5 < elapsedTime){
             type = UNUSED;
-            std::cout << "removing " << _name << " from scene" << std::endl;
             Scene::remove(this);
         }
         
@@ -167,16 +161,16 @@ public:
     void load(Ammo& ammo){
         switch (ammo.type) {
             case PISTOL:
-                configureAmmo(ammo, {0, -1.0f, 0}, 35.0f, 2.0f, 0.99f);
+                configureAmmo(ammo, {0, -1.0f, 0}, 50.0f, 2.0f, 0.99f);
                 break;
             case ARTILLARY:
-                configureAmmo(ammo, {0, -20.0f, 0}, 50.0f, 200.0f, 0.99f);
+                configureAmmo(ammo, {0, -20.0f, 0}, 100.0f, 200.0f, 0.99f);
                 break;
             case FIREBALL:
                 configureAmmo(ammo, {0, 0.6, 0} , 5.0f, 1.0f, 1.0f);
                 break;
             case LEASER:
-                configureAmmo(ammo, {0, 0, 0}, 100.0f, 0.1f, 0.99f);
+                configureAmmo(ammo, {0, 0, 0}, 1000.0f, 0.1f, 0.99f);
                 break;
             default:
                 break;
@@ -196,38 +190,8 @@ public:
     
     virtual void draw() override {
         glColor3f(0, 0, 1);
-//        glPushMatrix();
-//       // glTranslatef(0, 20, -5);
-//        glRotatef(spin, 1, 0, 0);
-//        
-//        
-//        glTranslatef(0, p.y + 15, 0);
-//        glScalef(1, 3, 1);
-//        glTranslatef(-p.x, -p.y, -p.z);
-//        glutSolidCube(10);
-//        glPopMatrix();
-//        
-//        glPushMatrix();{
-//            glutSolidSphere(15, 20, 20);
-//            glPushMatrix();{
-//                glTranslatef(p.x + 0, p.y -10, p.z + 0);
-//                glScalef(1, 0.5, 1);
-//                glutSolidCube(30);
-//            }glPopMatrix();
-//        }glPopMatrix();
-        
         barrel.draw();
         base.draw();
-        
-        glPushMatrix();
-        float theta = angle();
-        real y = real_sin(theta * DEG_TO_RAD) * barrel.length;
-        real z = real_cos(theta * DEG_TO_RAD) * barrel.length;
-        glTranslatef(p.x, p.y + y, -z);
-        // bullet
-        glColor3f(0, 0, 0);
-        glutSolidSphere(2.5, 10, 10);
-        glPopMatrix();
     }
     
     const real angle(){
@@ -256,18 +220,36 @@ public:
     
     virtual void init() override {
         Scene::init();
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        
         addObject(&canon);
         FreeCamera* camera = dynamic_cast<FreeCamera*>(this->camera);
         if(camera){
-            camera->speed(200);
+            //gluLookAt(-25.0, 8.0, 5.0,  0.0, 5.0, 22.0,  0.0, 1.0, 0.0);
+            camera->setup(Projection{fov, (float)_width/_height, 1, 1000}, {85.6487, 32.1921, 78.9163}, 200);
+            //camera->speed(200);
         }
     }
     
     virtual void display() override{
+        glPushMatrix();
+        glTranslatef(0, 0, 30);
         Scene::display();
+        glPopMatrix();
         
-        std::string msg = "cannon angle: " + std::to_string((int)(canon.angle()));
+        // Draw some scale lines
+        glPushMatrix();
+        glScalef(1, 1, -1);
+        glColor3f(0, 0, 0);
+        glBegin(GL_LINES);
+        for (unsigned i = 0; i < 1000; i += 10)
+        {
+            glVertex3f(-5.0f, 0.0f, i);
+            glVertex3f(5.0f, 0.0f, i);
+        }
+        glEnd();
+        glPopMatrix();
+        
+        std::string msg = "cannon angle: " + std::to_string((int)(round(canon.angle())));
         renderText(10, 25, msg.c_str());
         const char* ammoType = canon.ammoType();
         msg = std::string{"current loaded ammo: "} + ammoType;
@@ -309,6 +291,6 @@ public:
     
 };
 
-Scene* Scene::instance = new CanonTest("CanonTest");
+Scene* Scene::instance = new CanonTest("CanonTest", 1080, 720);
 
 #endif
