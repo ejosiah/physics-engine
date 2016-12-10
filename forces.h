@@ -25,16 +25,29 @@ namespace physics {
     
     class Gravity : public Force{
     private:
-        Vector a;
+        const Vector a;
         
     public:
         Gravity(Vector a): a(a){}
         
-        virtual void apply(Particle& p, real real) override{
+        virtual void apply(Particle& p, real time) override{
             Vector gravity = a * p.mass();
             p.addForce(gravity);
         }
     };
+
+	/*
+	class GroundForce : public Force {
+	private:
+		const Vector ground;
+
+		virtual void apply(Particle& p, real time) override {
+			Particle position = p.position();
+			if (position.y <= ground.y) {
+				p.f
+			}
+		}
+	}*/
     
     
     struct Registration{

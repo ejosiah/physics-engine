@@ -21,7 +21,7 @@ namespace physics{
         Vector _velocity;
         Vector _acceleration;
         Vector accumulatedForce;
-        real inverseMass;
+        real _inverseMass;
         real _damping;
         
         
@@ -53,7 +53,7 @@ namespace physics{
             _position.z = *itr;
         }
         
-        Vector position(){ return _position; }
+        Vector position() const { return _position; }
         
         void velocity(const Vector v){
             _velocity = v;
@@ -81,17 +81,21 @@ namespace physics{
             _acceleration.z = *itr;
         }
         
-        Vector acceleration(){ return _acceleration; }
+        Vector acceleration() const{ return _acceleration; }
+
+		real inverseMass() {
+			return _inverseMass;
+		}
         
         void mass(real m){
-            inverseMass = 1/m;
+            _inverseMass = 1/m;
         }
         
         void addForce(const Vector& force){
             accumulatedForce += force;
         }
         
-        real mass(){ return 1/inverseMass; }
+        real mass() const { return 1/_inverseMass; }
         
         real damping(const real d){
             return _damping = d;
@@ -105,11 +109,11 @@ namespace physics{
         void integrate(real time){
             
             using namespace std;
-            if(inverseMass <= 0) return;
+            if(_inverseMass <= 0) return;
             
             _position.addScaled(_velocity, time);
 
-           _acceleration.addScaled(accumulatedForce, inverseMass);
+           _acceleration.addScaled(accumulatedForce, _inverseMass);
             
             _velocity.addScaled(_acceleration, time);
             

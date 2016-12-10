@@ -57,6 +57,9 @@
     <ClInclude Include="..\Particle.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\contacts.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\main.cpp">

@@ -150,6 +150,7 @@
   <ItemGroup>
     <ClInclude Include="..\Camera.h" />
     <ClInclude Include="..\canonTest.h" />
+    <ClInclude Include="..\contacts.h" />
     <ClInclude Include="..\core.h" />
     <ClInclude Include="..\forces.h" />
     <ClInclude Include="..\Particle.h" />

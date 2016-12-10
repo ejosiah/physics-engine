@@ -35,8 +35,12 @@ namespace physics {
             z = *itr;
             w = 0;
         }
+
+		real squreLength() const {
+			return x * x + y * y + z * z;
+		}
     
-        real length(){
+        real length() const{
             return real_sqrt(x * x + y * y + z * z);
         }
     
@@ -51,7 +55,7 @@ namespace physics {
             return *this;
         }
         
-        Vector operator+(const Vector& v){
+        Vector operator+(const Vector& v) const{
             return Vector(x + v.x, y + v.y, z + v.z);
         }
         
@@ -64,7 +68,7 @@ namespace physics {
         }
         
         
-        Vector operator-(const Vector& v){
+        Vector operator-(const Vector& v) const{
             return Vector(x - v.x, y - v.y, z - v.z);
         }
         
@@ -75,7 +79,7 @@ namespace physics {
             return *this;
         }
         
-        Vector operator*(const real s){
+        Vector operator*(const real s) const{
             return Vector(x * s, y * s, z * s);
         }
         
@@ -119,11 +123,11 @@ namespace physics {
             }
         }
         
-        real dotProduct(const Vector& v){
+        real dot(const Vector& v) const{
             return x * v.x + y * v.y + z * v.z;
         }
         
-        Vector crossProduct(const Vector& v){
+        Vector cross(const Vector& v) const{
             return Vector{
                 y * v.z - z * v.y,
                 z * v.x - x * v.z,
@@ -132,17 +136,17 @@ namespace physics {
         }
         
         Vector& crossProductUpdate(const Vector& v){
-            *this = crossProduct(v);
+            *this = cross(v);
             
             return *this;
         }
         
         real operator%(const Vector& v){
-            return dotProduct(v);
+            return dot(v);
         }
         
-        Vector operator*(const Vector& v){
-            return crossProduct(v);
+        Vector operator*(const Vector& v) const{
+            return cross(v);
         }
         
         Vector& operator*=(const Vector& v){
@@ -174,7 +178,7 @@ namespace physics {
         static real angleBetween(Vector a, Vector b){
             a.normalize();
             b.normalize();
-            real dot = a.dotProduct(b);
+            real dot = a.dot(b);
             return real_acos(dot)/DEG_TO_RAD;
             
         }

@@ -236,7 +236,7 @@ public:
     void decayTranslation(){
         Vector t1 = _translation;
         Vector t2 = _translation;
-        if(t1.dotProduct(t2) > epsilon2){
+        if(t1.dot(t2) > epsilon2){
             _translation *= 0.95f;
         }
     }
