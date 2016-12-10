@@ -191,6 +191,11 @@ namespace physics {
         }
     };
     
+    using Position = Vector;
+    using Velocity = Vector;
+    using Acceleration = Vector;
+    using Force = Vector;
+    
     template<size_t N, size_t M>
     class Matrix{
     private:
@@ -279,9 +284,10 @@ namespace physics {
             return me * vm;
         }
         
+        
         friend std::ostream& operator<<(std::ostream& out, const Matrix<N, M>& m){
-            for(int i = 0; i < N1; i++){
-                for(int j = 0; j < M1; j++){
+            for(int i = 0; i < N; i++){
+                for(int j = 0; j < M; j++){
                     out << m.cell[i][j] << " ";
                 }
                 out << std::endl;

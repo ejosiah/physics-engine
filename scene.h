@@ -31,10 +31,13 @@
 #include "forces.h"
 #include "Timer.h"
 #include "Camera.h"
+#include "contacts.h"
 
 using namespace physics;
 
 ForceRegistry forceRegistry;
+GroundContactGenrator groundContact;
+ContactResolver contactResolver{2};
 
 class SceneObject{
 public:
@@ -48,6 +51,7 @@ class ParticleSceneObject : public SceneObject, public Particle{};
 
 using SceneObjects = std::unordered_map<const char*, SceneObject*>;
 using Marked = std::vector<SceneObject*>;
+using Contacts = std::vector<Contact>;
 using BigInt = long long int;
 
 class Scene{
@@ -56,6 +60,7 @@ protected:
     static const int DEFAULT_HEIGHT = 500;
     static SceneObjects objects;
 	static Marked markedObjects;
+    static Contacts contacts;
     const char* _title;
     Camera* camera;
     MouseHandler mouse;
@@ -180,6 +185,8 @@ public:
         real t = Timer::get().lastFrameTime;
         
         forceRegistry.applyForces(t);
+        groundContact.add(contacts, 0);
+        contactResolver.resolveContacts(contacts, t);
         
         for(std::pair<const char*, SceneObject*> entry : objects){
             SceneObject* obj = entry.second;
@@ -189,14 +196,19 @@ public:
             }
             obj->update(t);
         }
-		clearMarkedObjects();
+		clear();
     }
 
-	void clearMarkedObjects() {
+	void clear() {
 		for (auto obj : markedObjects) {
 			objects.erase(obj->name());
+            Particle* particle = dynamic_cast<Particle*>(obj);
+            if(particle){
+                groundContact.remove(particle);
+            }
 		}
 		markedObjects.clear();
+        contacts.clear();
 	}
     
     void renderText(float x, float y, const char *text, void* font=nullptr){
@@ -250,6 +262,10 @@ public:
     }
     
     static void addObject(SceneObject* object){
+        Particle* particle = dynamic_cast<Particle*>(object);
+        if(particle){
+            groundContact.add(particle);
+        }
         objects.insert(std::pair<const char*, SceneObject*>(object->name(), object));
     }
     
@@ -259,6 +275,10 @@ public:
     }
     
     static void remove(SceneObject* object){
+        Particle* particle = dynamic_cast<Particle*>(object);
+        if(particle){
+            groundContact.remove(particle);
+        }
 		markedObjects.push_back(object);
     }
     
@@ -266,5 +286,6 @@ public:
 
 SceneObjects Scene::objects;
 Marked Scene::markedObjects;
+Contacts Scene::contacts;
 
 #endif

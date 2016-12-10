@@ -17,7 +17,7 @@
 #include <algorithm>
 
 enum Type { PISTOL = 0, ARTILLARY, FIREBALL, LEASER, UNUSED };
-const static int ROUNDS= 16;
+const static int ROUNDS= 200;
 
 static int nextId = 0;
 
@@ -55,7 +55,7 @@ public:
     }
     
     virtual void update(float elapsedTime) override{
-		if(y() < 0 || z() > 1000 || startTime+5 < elapsedTime){
+		if(z() > 1000 || startTime+5 < elapsedTime){
             type = UNUSED;
             Scene::remove(this);
         }

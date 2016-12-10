@@ -18,9 +18,9 @@ namespace physics{
     class Particle{
         Vector _position;
     protected:
-        Vector _velocity;
-        Vector _acceleration;
-        Vector accumulatedForce;
+        Velocity _velocity;
+        Acceleration _acceleration;
+        Force accumulatedForce;
         real _inverseMass;
         real _damping;
         
@@ -53,7 +53,7 @@ namespace physics{
             _position.z = *itr;
         }
         
-        Vector position() const { return _position; }
+        Position position() const { return _position; }
         
         void velocity(const Vector v){
             _velocity = v;
@@ -67,7 +67,7 @@ namespace physics{
             _velocity.z = *itr;
         }
         
-        Vector velocity(){ return _velocity; }
+        Velocity velocity(){ return _velocity; }
         
         void acceleration(const Vector& acc){
             _acceleration = acc;
@@ -81,7 +81,7 @@ namespace physics{
             _acceleration.z = *itr;
         }
         
-        Vector acceleration() const{ return _acceleration; }
+        Acceleration acceleration() const{ return _acceleration; }
 
 		real inverseMass() {
 			return _inverseMass;

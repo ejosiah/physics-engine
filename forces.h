@@ -18,12 +18,12 @@
 
 namespace physics {
     
-    class Force{
+    class ForceGenerator{
     public:
         virtual void apply(Particle& p, real time) = 0;
     };
     
-    class Gravity : public Force{
+    class Gravity : public ForceGenerator{
     private:
         const Vector a;
         
@@ -36,23 +36,28 @@ namespace physics {
         }
     };
 
-	/*
-	class GroundForce : public Force {
-	private:
-		const Vector ground;
-
-		virtual void apply(Particle& p, real time) override {
-			Particle position = p.position();
-			if (position.y <= ground.y) {
-				p.f
-			}
-		}
-	}*/
+    class ForceRequestForVelocity : public ForceGenerator{
+    private:
+        Velocity expectedV;
+        
+    public:
+        ForceRequestForVelocity(Vector v): expectedV(v){}
+        
+        virtual void apply(Particle& p, real time) override{
+            real m = p.mass();
+            real t = time;
+            Vector v = expectedV;
+            
+            Vector f = v * (m/t);
+            p.addForce(f);
+        }
+        
+    };
     
     
     struct Registration{
         Particle& p;
-        Force& f;
+        ForceGenerator& f;
         
         bool operator==(const Registration& other){
             return &p == &(other.p) && &f == &other.f;

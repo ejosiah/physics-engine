@@ -3,6 +3,7 @@
 #include "core.h"
 #include "Particle.h"
 #include <Vector>
+#include <algorithm>
 
 namespace physics {
 
@@ -23,8 +24,8 @@ namespace physics {
 		}
 
 		real separatingVelocity() const {
-			Vector v1 = particle[0]->velocity;
-			Vector v2 = particle[1]->velocity;
+			Vector v1 = particle[0]->velocity();
+            Vector v2 = !particle[1] ? Vector{0, 0, 0} : particle[0]->velocity();
 			Vector n = contactNormal;
 
 			return  (v1 - v2).dot(n);
@@ -35,10 +36,10 @@ namespace physics {
 			real t = duration;
 			Particle* pa = particle[0];
 			Particle* pb = particle[1];
-			const Vector& va = pa->velocity;
+			const Vector& va = pa->velocity();
 			const Vector& n = contactNormal;
 			real ima = pa->inverseMass();
-			real imb = !pb ? 0 : pb->inverseMass();
+			real imb = pb == nullptr ? 0 : pb->inverseMass();
 
 			real sv = separatingVelocity();
 			real c = resitution;
@@ -79,7 +80,7 @@ namespace physics {
 			const Vector& n = contactNormal;
 			real d = penetration;
 			real ima = pa->inverseMass();
-			real imb = !pb ? 0 : pb->inverseMass();
+			real imb = pb == nullptr ? 0 : pb->inverseMass();
 			real totalIMass = ima + imb;
 
 			if (d <= 0 || totalIMass <= 0) return;
@@ -125,7 +126,7 @@ namespace physics {
 			_iterations = iterations;
 		}
 
-		void resolveContacts(std::vector<Contact*> contacts, real duration) {
+		void resolveContacts(std::vector<Contact> contacts, real duration) {
 			size_t n = contacts.size();
 			_iterationsUsed = 0;
 
@@ -133,7 +134,7 @@ namespace physics {
 				real maxSv = REAL_MAX;
 				int maxIndex = n;
 				for (int i = 0; i < n; i++) {
-					Contact& contact = *contacts[i];
+					Contact& contact = contacts[i];
 					real sv = contact.separatingVelocity();
 					if (sv < maxSv && (sv < 0 || contact.penetration > 0)) {	// use a list sorted by separating velocity and penetration
 						maxSv = sv;
@@ -142,7 +143,7 @@ namespace physics {
 				}
 
 				if (maxIndex == n) break;	// nothing to resovle
-				Contact& currentContact = *contacts[maxIndex];
+				Contact& currentContact = contacts[maxIndex];
 				currentContact.resolve(duration);
 				updateInterpenetrations(contacts, currentContact);
 
@@ -151,11 +152,11 @@ namespace physics {
 		}
 
 	protected:
-		void updateInterpenetrations(std::vector<Contact*>& contacts, Contact currentContact) {
-			int n = contacts.size();
+		void updateInterpenetrations(std::vector<Contact>& contacts, Contact currentContact) {
+			size_t n = contacts.size();
 			Vector* move = currentContact.movement;
 			for (int i = 0; i < n; i++){
-				Contact& otherContact = *contacts[i];
+				Contact& otherContact = contacts[i];
 				if (otherContact.particle[0] == currentContact.particle[0]){
 					otherContact.penetration -= move[0].dot(otherContact.contactNormal);
 				}
@@ -177,8 +178,43 @@ namespace physics {
 
 	class ContactGenerator {
 	public:
-		virtual void add(std::vector<Contact&> contacts, int limit) const = 0;
+		virtual void add(std::vector<Contact>& contacts, int limit) const = 0;
 	};
+    
+    class GroundContactGenrator : public ContactGenerator{
+    private:
+        std::vector<Particle*> particles;
+        Position ground{0, 1, 0};
+        
+    public:
+        void add(Particle* particle){
+            particles.push_back(particle);
+        }
+        
+        void remove(Particle* particle){
+            auto itr = std::find(particles.begin(), particles.end(), particle);
+            if(itr != particles.end()){
+                particles.erase(itr);
+            }
+            
+        }
+        
+        virtual void add(std::vector<Contact>& contacts, int limit) const override{
+            for(auto particle : particles){
+                real penetration = particle->y() - 2;
+                if(penetration < 0){
+                    Contact c;
+                    c.particle[0] = particle;
+                    c.particle[1] = nullptr;
+                    c.contactNormal = ground;
+                    c.resitution = 0.2;
+                    c.penetration = -penetration;
+                    contacts.push_back(c);
+                }
+            }
+            
+        }
+    };
 }
 
 #endif // PHYSICS_ENGINE_CONTACTS
