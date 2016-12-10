@@ -9,8 +9,15 @@
 #ifndef opengl_Spring_h
 #define opengl_Spring_h
 
+#ifdef __APPLE__
 #include <OpenGL/OpenGL.h>
-#include <GLUT/glut.h>
+#include <GLUT/GLUT.h>
+#else
+#  include <GL/glew.h>
+#  include <GL/freeglut.h>
+#  include <GL/glext.h>
+#pragma comment(lib, "glew32.lib")
+#endif
 #include "precision.h"
 #include <vector>
 

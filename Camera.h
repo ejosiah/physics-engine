@@ -172,7 +172,7 @@ public:
         real yaw = 0.0f;
         real pitch = 0.0f;
         if(fabs(_look.length() - 0) > epsilon){
-            yaw =  (real_atan2(_look.z, _look.x) + M_PI)/DEG_TO_RAD;
+            yaw =  (real_atan2(_look.z, _look.x) + PI)/DEG_TO_RAD;
             pitch = (real_asin(_look.y))/DEG_TO_RAD;
         }
         

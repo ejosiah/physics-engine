@@ -47,6 +47,7 @@ public:
 class ParticleSceneObject : public SceneObject, public Particle{};
 
 using SceneObjects = std::unordered_map<const char*, SceneObject*>;
+using Marked = std::vector<SceneObject*>;
 using BigInt = long long int;
 
 class Scene{
@@ -54,6 +55,7 @@ protected:
     static const int DEFAULT_WIDTH = 500;
     static const int DEFAULT_HEIGHT = 500;
     static SceneObjects objects;
+	static Marked markedObjects;
     const char* _title;
     Camera* camera;
     MouseHandler mouse;
@@ -187,7 +189,15 @@ public:
             }
             obj->update(t);
         }
+		clearMarkedObjects();
     }
+
+	void clearMarkedObjects() {
+		for (auto obj : markedObjects) {
+			objects.erase(obj->name());
+		}
+		markedObjects.clear();
+	}
     
     void renderText(float x, float y, const char *text, void* font=nullptr){
         glDisable(GL_DEPTH_TEST);
@@ -249,11 +259,12 @@ public:
     }
     
     static void remove(SceneObject* object){
-        objects.erase(object->name());
+		markedObjects.push_back(object);
     }
     
 };
 
 SceneObjects Scene::objects;
+Marked Scene::markedObjects;
 
 #endif

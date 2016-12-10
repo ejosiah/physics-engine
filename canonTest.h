@@ -55,7 +55,7 @@ public:
     }
     
     virtual void update(float elapsedTime) override{
-        if(y() < 0 || z() > 1000 or startTime+5 < elapsedTime){
+		if(y() < 0 || z() > 1000 || startTime+5 < elapsedTime){
             type = UNUSED;
             Scene::remove(this);
         }
@@ -167,7 +167,7 @@ public:
                 configureAmmo(ammo, {0, -20.0f, 0}, 100.0f, 200.0f, 0.99f);
                 break;
             case FIREBALL:
-                configureAmmo(ammo, {0, 0.6, 0} , 5.0f, 1.0f, 1.0f);
+                configureAmmo(ammo, {0, 0.6f, 0} , 5.0f, 1.0f, 1.0f);
                 break;
             case LEASER:
                 configureAmmo(ammo, {0, 0, 0}, 1000.0f, 0.1f, 0.99f);
@@ -225,7 +225,7 @@ public:
         FreeCamera* camera = dynamic_cast<FreeCamera*>(this->camera);
         if(camera){
             //gluLookAt(-25.0, 8.0, 5.0,  0.0, 5.0, 22.0,  0.0, 1.0, 0.0);
-            camera->setup(Projection{fov, (float)_width/_height, 1, 1000}, {85.6487, 32.1921, 78.9163}, 200);
+            camera->setup(Projection{fov, (float)_width/_height, 1, 1000}, {85.6487f, 32.1921f, 78.9163f}, 200);
             //camera->speed(200);
         }
     }

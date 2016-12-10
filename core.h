@@ -275,8 +275,7 @@ namespace physics {
             return me * vm;
         }
         
-        template<size_t N1, size_t M1>
-        friend std::ostream& operator<<(std::ostream& out, const Matrix<N1, M1>& m){
+        friend std::ostream& operator<<(std::ostream& out, const Matrix<N, M>& m){
             for(int i = 0; i < N1; i++){
                 for(int j = 0; j < M1; j++){
                     out << m.cell[i][j] << " ";

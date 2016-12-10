@@ -25,9 +25,9 @@ namespace physics {
         std::default_random_engine eng{seed()};
         
         if(typeid(lower) == typeid(int)){
-            return std::bind(std::uniform_int_distribution<T>{}, eng);
+            return std::bind(std::uniform_int_distribution<int>{}, eng);
         }else if(typeid(lower) == typeid(real)){
-            return std::bind(std::uniform_real_distribution<T>{}, eng);
+            return std::bind(std::uniform_real_distribution<real>{}, eng);
         }
         throw "invalid type";
     }
