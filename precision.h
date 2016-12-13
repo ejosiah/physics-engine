@@ -16,6 +16,7 @@
 
 namespace physics {
     using real = float;
+    using imaginary = float;
     const static real epsilon = 0.001f;
     const static real epsilon2 = epsilon * epsilon;
     

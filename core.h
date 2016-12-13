@@ -12,7 +12,7 @@
 #include <initializer_list>
 #include <iostream>
 #include <stdexcept>
-#include <glm/vec4.hpp>
+#include <glm/glm.hpp>
 
 #include "precision.h"
 
@@ -25,6 +25,8 @@ namespace physics {
             real data[4];
         };
         
+        friend class Quarternion;
+        
     public:
         Vector(real x = 0, real y = 0, real z = 0, real w = 0):
         x(x), y(y), z(z), w(w){}
@@ -36,6 +38,10 @@ namespace physics {
             z = *itr;
             w = 0;
         }
+        
+        Vector(const glm::vec3& v):Vector(v.x, v.y, v.z){}
+        
+        Vector(const glm::vec4& v):Vector(v.x, v.y, v.z, v.w){}
 
 		real squreLength() const {
 			return x * x + y * y + z * z;
@@ -194,6 +200,11 @@ namespace physics {
         operator glm::vec4(){
             return glm::vec4{x, y, z, w};
         }
+        
+        operator glm::vec3(){
+            return glm::vec3(x, y, z);
+        }
+        
     };
     
     using Position = Vector;
@@ -383,8 +394,72 @@ namespace physics {
     
     
     Matrix4 RotationMatrix(const real yaw, const real pitch, const real roll){
-        return rotateY(yaw) * rotateX(pitch) * rotateZ(roll);
+        return rotateX(pitch) * rotateY(yaw) * rotateZ(roll);
     }
+    
+    class Quarternion{
+    public:
+        union{
+            struct{
+                real w;
+                real x;
+                real y;
+                real z;
+            };
+            real data[4];
+        };
+        
+        Quarternion(real w = 0, real x = 0, real y = 0, real z = 0)
+        :w(w), x(x), y(y), z(z){}
+        
+        Quarternion(const Vector& v): Quarternion(0, v.x, v.y, v.z){
+            
+        }
+        
+        void normailize(){
+            real d = w * w + x * x + y * y + z * z;
+            
+            if(d == 0) {
+                w = 1;
+                return;
+            }
+            
+            d = real(1)/real_sqrt(d);
+            
+            w *= d;
+            x *= d;
+            y *= d;
+            z *= d;
+        }
+ 
+        Quarternion& operator*=(const Quarternion& q){
+            w = w * q.w - x * q.x - y * q.y - z * q.z;
+            x = w * q.x + x * q.w + y * q.z - z * q.y;
+            y = w * q.y - x * q.z + y * q.w + z * q.x;
+            z = w * q.z + x * q.y - y * q.x + z * q.w;
+            
+            return *this;
+        }
+        
+        Quarternion& rotateBy(const Vector& v){
+            (*this) *= v;
+            return *this;
+        }
+        
+        Quarternion& addScaled(const Vector& v, real s){
+            Quarternion q (0, v.x * s, v.y * s, v.z * s);
+            
+            q *= *this;
+            real half = real(0.5);
+            w += q.w * half;
+            x += q.x * half;
+            y += q.y * half;
+            z += q.z * half;
+            
+            return *this;
+        }
+    };
+
 }
 
 #endif
