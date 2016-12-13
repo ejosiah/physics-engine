@@ -35,18 +35,35 @@ namespace physics {
             p.addForce(gravity);
         }
     };
+    
+    class InverseForce : public ForceGenerator{
+    private:
+        
+    public:
+        
+        virtual void apply(Particle& p, real time) override{
+            if(fabs(p.y() - 0) < epsilon){
+                std::cout << "applying invserse force";
+                p.addForce(-p.accumulatedForces());
+            }
+        }
+    };
 
     class ForceRequestForVelocity : public ForceGenerator{
     private:
-        Velocity expectedV;
+        Velocity _velocity;
         
     public:
-        ForceRequestForVelocity(Vector v): expectedV(v){}
+        ForceRequestForVelocity(Vector v = {}): _velocity(v){}
+        
+        void velocity(Vector v){
+            _velocity = v;
+        }
         
         virtual void apply(Particle& p, real time) override{
             real m = p.mass();
             real t = time;
-            Vector v = expectedV;
+            Vector v = _velocity;
             
             Vector f = v * (m/t);
             p.addForce(f);
@@ -90,6 +107,16 @@ namespace physics {
             }
             return *this;
             
+        }
+        
+        ForceRegistry& operator-(const Particle& p){
+            auto itr = std::find_if(registry.begin(), registry.end(), [&](Registration& registered){
+                return &(registered.p) == &p ;
+            });
+            if(itr != registry.end()){
+                registry.erase(itr);
+            }
+            return *this;
         }
         
         

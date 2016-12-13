@@ -4,6 +4,7 @@
 #include "Particle.h"
 #include <Vector>
 #include <algorithm>
+#include <queue>
 
 namespace physics {
 
@@ -101,7 +102,7 @@ namespace physics {
 
 		}
 	};
-
+    
 
 	struct MostSevereContact {
 
@@ -111,6 +112,8 @@ namespace physics {
 			return svA < svB && (svA < 0 || ca.penetration > 0);
 		}
 	};
+    
+    using ContactsByPriority =  std::priority_queue<Contact, std::vector<Contact>, MostSevereContact>;
 
 	class ContactResolver {
 	protected:
@@ -145,7 +148,7 @@ namespace physics {
 				if (maxIndex == n) break;	// nothing to resovle
 				Contact& currentContact = contacts[maxIndex];
 				currentContact.resolve(duration);
-				updateInterpenetrations(contacts, currentContact);
+			//	updateInterpenetrations(contacts, currentContact);
 
 				_iterationsUsed++;
 			}
@@ -207,12 +210,55 @@ namespace physics {
                     c.particle[0] = particle;
                     c.particle[1] = nullptr;
                     c.contactNormal = ground;
-                    c.resitution = 0.2;
+                    c.resitution = 0.5;
                     c.penetration = -penetration;
                     contacts.push_back(c);
                 }
             }
             
+        }
+    };
+    
+    class SphericalContactGenerator : public ContactGenerator{
+    private:
+        std::vector<Particle*> particles;
+        real radius;
+        
+    public:
+        SphericalContactGenerator(real r): radius(r){}
+        
+        void add(Particle* particle){
+            particles.push_back(particle);
+        }
+        
+        void remove(Particle* particle){
+            auto itr = std::find(particles.begin(), particles.end(), particle);
+            if(itr != particles.end()){
+                particles.erase(itr);
+            }
+        }
+        
+        virtual void add(std::vector<Contact>& contacts, int limit) const override{
+//            for(auto pa : particles){
+//                for(auto pb : particles){
+//                    if(pa == pb) continue;
+//
+//                    int pen = peneratration(*pa, *pb);
+//                    if(pen > 0){
+//                        Contact c;
+//                        c.particle[0] = pa;
+//                        c.particle[1] = pb;
+//                        c.contactNormal = (pa->position() - pb->position()).normalize();
+//                        c.resitution = 1;
+//                        c.penetration = pen;
+//                        contacts.push_back(c);
+//                    }
+//                }
+//            }
+        }
+        
+        int peneratration(const Particle& pa, const Particle& pb) const{
+            return (2 * radius) - (pa.position() - pb.position()).length();
         }
     };
 }

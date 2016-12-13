@@ -27,7 +27,7 @@ namespace physics{
         
         
     public:
-        Particle(){}
+        Particle(): _inverseMass(0), _damping(1){}
         
         real x() const{
             return _position.x;
@@ -95,6 +95,10 @@ namespace physics{
             accumulatedForce += force;
         }
         
+        Vector accumulatedForces() const {
+            return accumulatedForce;
+        }
+        
         real mass() const { return 1/_inverseMass; }
         
         real damping(const real d){
@@ -112,10 +116,12 @@ namespace physics{
             if(_inverseMass <= 0) return;
             
             _position.addScaled(_velocity, time);
-
-           _acceleration.addScaled(accumulatedForce, _inverseMass);
             
-            _velocity.addScaled(_acceleration, time);
+            Acceleration acc = _acceleration;
+            
+            acc.addScaled(accumulatedForce, _inverseMass);
+            
+            _velocity.addScaled(acc, time);
             
             _velocity *= real_pow(_damping, time);
             

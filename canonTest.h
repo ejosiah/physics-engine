@@ -109,6 +109,8 @@ public:
 class Canon : public SceneObject{
 private:
     Ammunition<ROUNDS> ammuiation;
+    std::array<ForceRequestForVelocity, ROUNDS> forces;
+    std::array<ForceRequestForVelocity, ROUNDS>::iterator nextForce;
     Type currentType = PISTOL;
     real spin = -90;
     real dx = 100;
@@ -127,6 +129,7 @@ public:
         for(int i = 0; i < ROUNDS; i++){
             ammuiation[i] = new Ammo();
         }
+        nextForce = forces .begin();
     }
     friend class CanonTest;
     virtual void update(float elapsedTime) override{
@@ -146,14 +149,15 @@ public:
         if(itr != ammuiation.end()){
             Ammo& shot = **itr;
             shot.type = currentType;
-            load(shot);
-            shot.startTime = Timer::get().lastFrameTime;
-            
             real theta = angle();
             real y = real_sin(theta * DEG_TO_RAD) * barrel.length;
             real z = real_cos(theta * DEG_TO_RAD) * barrel.length;
             
             shot.position({p.x, p.y + y, z});
+            load(shot);
+            shot.startTime = Timer::get().lastFrameTime;
+            
+  
             Scene::addObject(&shot);
         }
     }
@@ -182,7 +186,11 @@ public:
         real y = real_sin(theta * DEG_TO_RAD) * speed;
         real z = real_cos(theta * DEG_TO_RAD) * speed;
         
-        ammo.velocity({0, y, z});
+        Velocity v{0, y, z};
+        
+        
+        
+        ammo.velocity(v);
         ammo.acceleration(acc);
         ammo.mass(mass);
         ammo.damping(damping);

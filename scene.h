@@ -37,6 +37,7 @@ using namespace physics;
 
 ForceRegistry forceRegistry;
 GroundContactGenrator groundContact;
+SphericalContactGenerator sphericalContact{2};
 ContactResolver contactResolver{2};
 
 class SceneObject{
@@ -136,7 +137,7 @@ public:
         glLoadIdentity();
         
         camera->move();
-        drawCrosshairs();
+    //    drawCrosshairs();
         display();
         frames++;
         debug();
@@ -186,6 +187,7 @@ public:
         
         forceRegistry.applyForces(t);
         groundContact.add(contacts, 0);
+        sphericalContact.add(contacts, 0);
         contactResolver.resolveContacts(contacts, t);
         
         for(std::pair<const char*, SceneObject*> entry : objects){
@@ -265,6 +267,7 @@ public:
         Particle* particle = dynamic_cast<Particle*>(object);
         if(particle){
             groundContact.add(particle);
+            sphericalContact.add(particle);
         }
         objects.insert(std::pair<const char*, SceneObject*>(object->name(), object));
     }
@@ -278,6 +281,7 @@ public:
         Particle* particle = dynamic_cast<Particle*>(object);
         if(particle){
             groundContact.remove(particle);
+            sphericalContact.remove(particle);
         }
 		markedObjects.push_back(object);
     }

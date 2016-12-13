@@ -12,6 +12,7 @@
 #include <initializer_list>
 #include <iostream>
 #include <stdexcept>
+#include <glm/vec4.hpp>
 
 #include "precision.h"
 
@@ -189,6 +190,10 @@ namespace physics {
             out << ")";
             return out;
         }
+        
+        operator glm::vec4(){
+            return glm::vec4{x, y, z, w};
+        }
     };
     
     using Position = Vector;
@@ -293,6 +298,39 @@ namespace physics {
                 out << std::endl;
             }
             return out;
+        }
+        
+        // return the determinant of this matrix
+        operator real() {
+            if (N != M) {
+                throw std::logic_error("Not a square matrix");
+            }
+            if (N == 2) {
+                return (*this)[0][0] * (*this)[1][1] - (*this)[0][1] * (*this)[1][0];
+            }
+            real result;
+            Matrix<N - 1, N - 1> minor;
+            for (int i = 0; i < N; i++) { // for each element in the top row
+                int j = 0, k = 0;
+                for (int p = 0; p < N - 1; p++) { // for every other row
+                    for (int q = 0; q < N; q++) { // scan each element for current row
+                        if (q == i) { // skip elements in same colunm as element [0][i]
+                            continue;
+                        }
+                        minor[j][k] = (*this)[p][q];
+                        k++;
+                    }
+                    j++;
+                }
+                if (i % 2 != 0) { // every second element
+                    result -= (*this)[0][i] * T(minor);
+                }
+                else {
+                    result += (*this)[0][i] * T(minor);
+                }
+                
+            }
+            return result;
         }
     };
     

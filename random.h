@@ -68,7 +68,7 @@ namespace physics {
             return round((rng() * x));
         }
         
-        Vector vector(Vector& min, Vector max){
+        Vector vector(Vector min, Vector max){
             return Vector{
                 _real(min.x, max.x),
                 _real(min.y, max.y),
@@ -76,6 +76,14 @@ namespace physics {
             };
         }
         
+    };
+    
+    struct RandomColor{
+        Random rng;
+        
+        Vector operator()(){
+            return rng.vector({0, 0, 0}, {1.0, 1.0, 1.0});
+        }
     };
 }
 #endif
