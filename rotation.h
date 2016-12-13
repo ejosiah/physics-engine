@@ -30,7 +30,29 @@ public:
         Scene::init();
     }
     
+    bool once = true;
+    
     virtual void display() override {
+        
+
+        
+        if(once){
+            glPushMatrix();
+            glLoadIdentity();
+            once = false;
+            using namespace std;
+            float matrix[16];
+            
+            glGetFloatv(GL_MODELVIEW_MATRIX, matrix);
+            for(int i = 0; i < 16; i++){
+                if(i%4 == 0) cout << endl;
+                cout << matrix[i] << " ";
+            
+            }
+           glPopMatrix();
+        }
+        
+        
         glRotatef(roll, 0, 0, 1);
         glRotatef(yaw, 0, 1, 0);
         glRotatef(pitch, 1, 0, 0);

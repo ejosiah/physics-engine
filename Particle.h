@@ -127,6 +127,10 @@ namespace physics{
             
 
          
+            clearAccumulator();
+        }
+        
+        void clearAccumulator(){
             accumulatedForce.clear();
         }
         

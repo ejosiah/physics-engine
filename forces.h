@@ -36,18 +36,18 @@ namespace physics {
         }
     };
     
-    class InverseForce : public ForceGenerator{
-    private:
-        
-    public:
-        
-        virtual void apply(Particle& p, real time) override{
-            if(fabs(p.y() - 0) < epsilon){
-                std::cout << "applying invserse force";
-                p.addForce(-p.accumulatedForces());
-            }
-        }
-    };
+//    class InverseForce : public ForceGenerator{
+//    private:
+//        
+//    public:
+//        
+//        virtual void apply(Particle& p, real time) override{
+//            if(fabs(p.y() - 0) < epsilon){
+//                std::cout << "applying invserse force";
+//                p.addForce(-p.accumulatedForces());
+//            }
+//        }
+//    };
 
     class ForceRequestForVelocity : public ForceGenerator{
     private:

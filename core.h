@@ -394,7 +394,7 @@ namespace physics {
     
     
     Matrix4 RotationMatrix(const real yaw, const real pitch, const real roll){
-        return rotateX(pitch) * rotateY(yaw) * rotateZ(roll);
+        return rotateY(yaw) * rotateX(pitch) * rotateZ(roll);
     }
     
     class Quarternion{

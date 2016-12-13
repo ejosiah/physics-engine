@@ -32,13 +32,13 @@
 #include "Timer.h"
 #include "Camera.h"
 #include "contacts.h"
+#include "ParticleWorld.h"
 
 using namespace physics;
-
-ForceRegistry forceRegistry;
-GroundContactGenrator groundContact;
-SphericalContactGenerator sphericalContact{2};
-ContactResolver contactResolver{2};
+int MAX_CONTACTS = 500;
+ParticleWorld world{ MAX_CONTACTS };
+GroundContactGenrator groundContact{world.particles()};
+SphericalContactGenerator sphericalContact{world.particles(), 2};
 
 class SceneObject{
 public:
@@ -61,7 +61,6 @@ protected:
     static const int DEFAULT_HEIGHT = 500;
     static SceneObjects objects;
 	static Marked markedObjects;
-    static Contacts contacts;
     const char* _title;
     Camera* camera;
     MouseHandler mouse;
@@ -86,6 +85,8 @@ public:
         FreeCamera* camera{ new FreeCamera() };
         camera->setup(Projection{fov, (float)w/h, 1, 1000}, Vector{80, 20, 60}, 100.0);
         mouse = MouseHandler(camera);
+        world.contactGenerators().push_back(&sphericalContact);
+        world.contactGenerators().push_back(&groundContact);
         
         this->camera = camera;
     }
@@ -137,7 +138,7 @@ public:
         glLoadIdentity();
         
         camera->move();
-    //    drawCrosshairs();
+        drawCrosshairs();
         display();
         frames++;
         debug();
@@ -185,17 +186,11 @@ public:
     virtual void update(){
         real t = Timer::get().lastFrameTime;
         
-        forceRegistry.applyForces(t);
-        groundContact.add(contacts, 0);
-        sphericalContact.add(contacts, 0);
-        contactResolver.resolveContacts(contacts, t);
+        world.startFrame();
+        world.runPhysics(t);
         
         for(std::pair<const char*, SceneObject*> entry : objects){
             SceneObject* obj = entry.second;
-            ParticleSceneObject* p = dynamic_cast<ParticleSceneObject*>(obj);
-            if(p){
-                p->integrate(Timer::get().lastFrameTime);
-            }
             obj->update(t);
         }
 		clear();
@@ -206,11 +201,10 @@ public:
 			objects.erase(obj->name());
             Particle* particle = dynamic_cast<Particle*>(obj);
             if(particle){
-                groundContact.remove(particle);
+                remove(obj);
             }
 		}
 		markedObjects.clear();
-        contacts.clear();
 	}
     
     void renderText(float x, float y, const char *text, void* font=nullptr){
@@ -266,8 +260,7 @@ public:
     static void addObject(SceneObject* object){
         Particle* particle = dynamic_cast<Particle*>(object);
         if(particle){
-            groundContact.add(particle);
-            sphericalContact.add(particle);
+            world.add(*particle);
         }
         objects.insert(std::pair<const char*, SceneObject*>(object->name(), object));
     }
@@ -280,8 +273,7 @@ public:
     static void remove(SceneObject* object){
         Particle* particle = dynamic_cast<Particle*>(object);
         if(particle){
-            groundContact.remove(particle);
-            sphericalContact.remove(particle);
+            world.remove(*particle);
         }
 		markedObjects.push_back(object);
     }
@@ -290,6 +282,5 @@ public:
 
 SceneObjects Scene::objects;
 Marked Scene::markedObjects;
-Contacts Scene::contacts;
 
 #endif

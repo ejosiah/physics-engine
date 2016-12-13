@@ -34,7 +34,7 @@ public:
     Ball(real r = 0): radius(r){
         _name = "ball" + std::to_string(id++);
         color = rngColor();
-        
+        lifetime = 0;
     }
     
     virtual const char* name() override{
@@ -42,9 +42,9 @@ public:
     }
     
     virtual void update(float elapsedTime) override{
-        lifetime += elapsedTime
-        integrate(elapsedTime);
-        if(lifetime > 5){
+        lifetime += elapsedTime;
+        if(lifetime > 30){
+            lifetime = 0;
             Scene::remove(this);
         }
     }
@@ -61,13 +61,12 @@ public:
 
 class RaningBalls : public Scene{
 private:
-    const static int row = 5;
-    const static int col = 4;
+    const static int row = 20;
+    const static int col = 20;
     Ball clouds[row][col][1];
     real radius = 2;
     real currentTime;
-    Gravity* gravity = new Gravity({0, -9.8, 0});
-    InverseForce* inverseF = new InverseForce;
+    Gravity* gravity = new Gravity({0, -10, 0});
 public:
     RaningBalls(const char* title):Scene(title){
         using namespace std;
@@ -100,8 +99,7 @@ public:
                 int r = RNG._int(row - 1);
                 int c = RNG._int(col - 1);
                 
-                forceRegistry + Registration{clouds[r][c][0], *gravity};
-                forceRegistry + Registration{clouds[r][c][0], *inverseF};
+                world.forceRegistry() + Registration{clouds[r][c][0], *gravity};
                 
                 if(!clouds[r][c][0].onScene){
                     addObject(&clouds[r][c][0]);
