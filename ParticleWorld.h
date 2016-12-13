@@ -76,8 +76,8 @@ namespace physics{
         void remove(Particle& p){
             auto itr = std::find_if(_partices.begin(), _partices.end(), [&](Particle* p1){ return p1 == &p; });
             if(itr != _partices.end()){
-                _partices.erase(itr);
                 _forceRegistry - (**itr);
+				_partices.erase(itr);
             }
         }
         
