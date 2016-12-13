@@ -55,7 +55,7 @@ public:
     }
     
     virtual void update(float elapsedTime) override{
-		if(z() > 1000 || startTime+5 < elapsedTime){
+		if(z() > 1000 || y() > 500 || startTime+5 < elapsedTime){
             type = UNUSED;
             Scene::remove(this);
         }

@@ -117,7 +117,7 @@ namespace physics{
                     c.particle[0] = particle;
                     c.particle[1] = nullptr;
                     c.contactNormal = ground;
-                    c.resitution = 0.2;
+                    c.resitution = 0.4;
                     c.penetration = -penetration;
                     contacts.push_back(c);
                     count++;

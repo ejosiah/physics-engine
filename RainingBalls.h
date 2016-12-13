@@ -63,10 +63,11 @@ class RaningBalls : public Scene{
 private:
     const static int row = 20;
     const static int col = 20;
-    Ball clouds[row][col][1];
+    const static int nBalls = 1;
+    Ball clouds[row][col][nBalls];
     real radius = 2;
     real currentTime;
-    Gravity* gravity = new Gravity({0, -10, 0});
+    Gravity* gravity = new Gravity({0, -20, 0});
 public:
     RaningBalls(const char* title):Scene(title){
         using namespace std;
@@ -98,12 +99,13 @@ public:
             for(int i = 0; i < n; i++){
                 int r = RNG._int(row - 1);
                 int c = RNG._int(col - 1);
+                int n = RNG._int(nBalls - 1);
                 
-                world.forceRegistry() + Registration{clouds[r][c][0], *gravity};
+                world.forceRegistry() + Registration{clouds[r][c][n], *gravity};
                 
-                if(!clouds[r][c][0].onScene){
-                    addObject(&clouds[r][c][0]);
-                    clouds[r][c][0].onScene = true;
+                if(!clouds[r][c][n].onScene){
+                    addObject(&clouds[r][c][n]);
+                    clouds[r][c][n].onScene = true;
                 }
             }
             currentTime = 0;

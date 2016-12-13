@@ -201,7 +201,7 @@ public:
 			objects.erase(obj->name());
             Particle* particle = dynamic_cast<Particle*>(obj);
             if(particle){
-                remove(obj);
+                world.remove(*particle);
             }
 		}
 		markedObjects.clear();
@@ -271,10 +271,6 @@ public:
     }
     
     static void remove(SceneObject* object){
-        Particle* particle = dynamic_cast<Particle*>(object);
-        if(particle){
-            world.remove(*particle);
-        }
 		markedObjects.push_back(object);
     }
     
