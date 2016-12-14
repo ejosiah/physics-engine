@@ -44,12 +44,15 @@ public:
     }
     
     virtual void display() override {
+        
 
         
         if(once){
             glPushMatrix();
-            glLoadIdentity();
-            glRotatef(30, 0, 0, 1);
+           // glLoadIdentity();
+           // glRotatef(30, 0, 0, 1);
+            glLoadMatrixf(IdentityMatrix4);
+            glMultMatrixf(rotateZ(30));
             printCurrentMatrix();
             glPopMatrix();
             once = false;
