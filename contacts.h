@@ -147,7 +147,7 @@ namespace physics {
 				if (maxIndex == n) break;	// nothing to resovle
 				Contact& currentContact = contacts[maxIndex];
 				currentContact.resolve(duration);
-			//	updateInterpenetrations(contacts, currentContact);
+				updateInterpenetrations(contacts, currentContact);
 
 				_iterationsUsed++;
 			}

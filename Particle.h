@@ -16,8 +16,9 @@
 namespace physics{
     
     class Particle{
-        Vector _position;
+        
     protected:
+		Vector _position;
         Velocity _velocity;
         Acceleration _acceleration;
         Force accumulatedForce;

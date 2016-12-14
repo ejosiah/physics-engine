@@ -154,8 +154,13 @@
     <ClInclude Include="..\contacts.h" />
     <ClInclude Include="..\core.h" />
     <ClInclude Include="..\forces.h" />
+    <ClInclude Include="..\Matrix3.h" />
+    <ClInclude Include="..\Matrix3X4.h" />
+    <ClInclude Include="..\Matrix4.h" />
     <ClInclude Include="..\Particle.h" />
     <ClInclude Include="..\precision.h" />
+    <ClInclude Include="..\Quarternion.h" />
+    <ClInclude Include="..\RainingBalls.h" />
     <ClInclude Include="..\random.h" />
     <ClInclude Include="..\scene.h" />
     <ClInclude Include="..\SceneTest.h" />
@@ -164,6 +169,7 @@
     <ClInclude Include="..\SpringTest.h" />
     <ClInclude Include="..\templateScene.h" />
     <ClInclude Include="..\Timer.h" />
+    <ClInclude Include="..\vector.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\main.cpp" />

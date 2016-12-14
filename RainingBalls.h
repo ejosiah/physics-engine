@@ -46,6 +46,8 @@ public:
         if(lifetime > 30){
             lifetime = 0;
             Scene::remove(this);
+			_position.y = 200.0f;
+			onScene = false;
         }
     }
     
