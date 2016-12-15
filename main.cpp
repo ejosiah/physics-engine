@@ -5,6 +5,7 @@
 //  Created by Josiah Ebhomenye on 03/12/2016.
 //  Copyright (c) 2016 Josiah Ebhomenye. All rights reserved.
 //
+/*
 #include "RainingBalls.h"
 #include <iostream>
 #include "Timer.h"
@@ -86,4 +87,45 @@ int main(int argc, char * argv[])
 }
  
 
+ */
 
+#include "Matrix4.h"
+#include <glm\glm.hpp>
+#include <glm\gtc\type_ptr.hpp>
+
+int main() {
+	using namespace physics;
+	using namespace std;
+	using namespace glm;
+
+	mat4 m{ 
+		2.0f, 0.0f, -1.0f, 0.0f, 
+		0.0f, 1.0f, 5.0f, 1.0f, 
+		-1.0f, 3.0f, -2.0f, 0.0f, 
+		0.0f, 0.0f, 0.0f, 1.0f };
+
+	mat4 im = inverse(m);
+
+	mat4 m2 = m * im;
+
+
+	Matrix4 M = {
+		{2, 0, -1, 0},
+		{0, 1, 5, 1},
+		{-1, 3, -2, 0},
+		{0, 0, 0, 1}
+	};
+
+	Matrix4 IM;
+	IM.inverseOf(M);
+
+	Matrix4 M2 = M * IM;
+
+	cout << M << endl << endl;
+	cout << IM << endl << endl;
+	cout << M2 << endl << endl;
+
+	cout << Matrix4(glm::value_ptr(m2)) << endl;
+	cin.get();
+	return 0;
+}

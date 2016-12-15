@@ -159,7 +159,7 @@
     <ClInclude Include="..\Matrix4.h" />
     <ClInclude Include="..\Particle.h" />
     <ClInclude Include="..\precision.h" />
-    <ClInclude Include="..\Quarternion.h" />
+    <ClInclude Include="..\Quaternion.h" />
     <ClInclude Include="..\RainingBalls.h" />
     <ClInclude Include="..\random.h" />
     <ClInclude Include="..\scene.h" />

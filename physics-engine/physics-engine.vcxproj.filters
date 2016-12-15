@@ -75,7 +75,7 @@
     <ClInclude Include="..\vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Quarternion.h">
+    <ClInclude Include="..\Quaternion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

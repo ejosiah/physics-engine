@@ -9,6 +9,7 @@
 #ifndef opengl_Matrix4_h
 #define opengl_Matrix4_h
 
+#include <iostream>
 #include "vector.h"
 #include "Quaternion.h"
 
@@ -170,12 +171,13 @@ namespace physics{
         }
 
 		operator real() const {
-			return -i * f * c +
-				e * j * c +
-				i * b * g -
-				a * j * g -
-				e * b * k +
-				a * f * k;
+			return         
+				-i*f*c +
+				e*j*c +
+				i*b*g -
+				a*j*g -
+				e*b*k +
+				a*f*k;
 		};
 
 		real determinant() const {
@@ -201,40 +203,51 @@ namespace physics{
 		}
 
 		void inverseOf(const Matrix4& m) {
-			real det = (real)*this;
+			real det = determinant();
 			if (det == 0) return;
 			det = ((real)1.0) / det;
 
-			a = (-m.j * m.g + m.f * m.k)*det;
-			e = (m.i * m.g - m.e * m.k)*det;
-			i = (-m.i * m.f + m.e * m.j)*det;
+			a = (-m.j*m.g + m.f*m.k)*det;
+			e = (m.i*m.g - m.e*m.k)*det;
+			i = (-m.i*m.f + m.e*m.j)*det;
 
-			b = (m.j * m.c - m.b * m.k)*det;
-			f = (-m.i * m.c + m.a * m.k)*det;
-			j = (m.i * m.b - m.a * m.j)*det;
+			b = (m.j*m.c - m.b*m.k)*det;
+			f = (-m.i*m.c + m.a*m.k)*det;
+			j = (m.i*m.b - m.a*m.j)*det;
 
-			c = (-m.f * m.c + m.b * m.g)*det;
-			g = (+m.e * m.c - m.a * m.g)*det;
-			k = (-m.e * m.b + m.a * m.f)*det;
+			c = (-m.f*m.c + m.b*m.g)*det;
+			g = (+m.e*m.c - m.a*m.g)*det;
+			k = (-m.e*m.b + m.a*m.f)*det;
 
-			d = (m.j * m.g * m.d
-				- m.f * m.k * m.d
-				- m.j * m.c * m.h
-				+ m.b * m.k * m.h
-				+ m.f * m.c * m.l
-				- m.b * m.g * m.l)*det;
-			h = (-m.i * m.g * m.d
-				+ m.e * m.k * m.d
-				+ m.i * m.c * m.h
-				- m.a * m.k * m.h
-				- m.e * m.c * m.l
-				+ m.a * m.g * m.l)*det;
-			l = (m.i * m.f * m.d
-				- m.e * m.j * m.d
-				- m.i * m.b * m.h
-				+ m.a * m.j * m.h
-				+ m.e * m.b * m.l
-				- m.a * m.f * m.l)*det;
+			d = (m.j*m.g*m.d
+				- m.f*m.k*m.d
+				- m.j*m.c*m.h
+				+ m.b*m.k*m.h
+				+ m.f*m.c*m.l
+				- m.b*m.g*m.l)*det;
+			h = (-m.i*m.g*m.d
+				+ m.e*m.k*m.d
+				+ m.i*m.c*m.h
+				- m.a*m.k*m.h
+				- m.e*m.c*m.l
+				+ m.a*m.g*m.l)*det;
+			l = (m.i*m.f*m.d
+				- m.e*m.j*m.d
+				- m.i*m.b*m.h
+				+ m.a*m.j*m.h
+				+ m.e*m.b*m.l
+				- m.a*m.f*m.l)*det;
+
+		}
+
+		friend std::ostream& operator<<(std::ostream& out, const Matrix4 m) {
+			for (int i = 0; i < 4; i++) {
+				for (int j = 0; j < 4; j++) {
+					out << m[i][j] << " ";
+				}
+				out << std::endl;
+			}
+			return out;
 		}
 
     };

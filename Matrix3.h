@@ -19,12 +19,12 @@ namespace physics{
                 real d, e, f;
                 real g, h, i;
             };
-            real cells[9];
+            real data[9];
         };
     public:
         Matrix3(){
             for(int i = 0; i < 9; i++){
-                cells[i] = 0;
+                data[i] = 0;
             }
         }
         
@@ -35,7 +35,7 @@ namespace physics{
                 if(row->size() != 3) throw "invalid no. of columns";
                 auto col = row->begin();
                 for(int j = 0; j < 3; j++, col++){
-                    cells [i * 3 + j] = *col;
+                    data [i * 3 + j] = *col;
                 }
                 row++;
                 
@@ -150,37 +150,39 @@ namespace physics{
         }
 
 		Vector getRowVector(int i) const {
-			return { cells[i * 3], cells[i * 3 + 1], cells[i * 3 + 2] };
+			return { data[i * 3], data[i * 3 + 1], data[i * 3 + 2] };
 		}
 
 		Vector getAxisVector(int i) const {
-			return{ cells[i], cells[i + 3], cells[i + 6] };
+			return{ data[i], data[i + 3], data[i + 6] };
 		}
         
-        void inverseOf(const Matrix3& m1){
-            real d = m1.determinant();
-            
-            if(d == real(0)){
-                throw "no inverse";
-            }
-            real di = real(1.0)/d;
-            
-            real t1 = m1.a * m1.e;
-            real t2 = m1.a * m1.f;
-            real t3 = m1.b * m1.d;
-            real t4 = m1.c * m1.d;
-            real t5 = m1.b * m1.g;
-            real t6 = m1.c * m1.g;
-            
-            a = (m1.e * m1.i - m1.f* m1.h) * di;
-            b = (m1.c * m1.h - m1.b * m1.i) * di;
-            c = (m1.b * m1.f - m1.c * m1.e) * di;
-            d = (m1.f * m1.g - m1.d * m1.i) * di;
-            e = (m1.a * m1.i - t6) * di;
-            f = (t4 - t2) * di;
-            g = (m1.d * m1.h - m1.e * m1.g) * di;
-            h = (t5 - m1.a * m1.h) * di;
-            i = (t1 - t3) * di;
+        void inverseOf(const Matrix3& m){
+			real t4 = m.a * m.e;
+			real t6 = m.a * m.f;
+			real t8 = m.b * m.d;
+			real t10 = m.c * m.d;
+			real t12 = m.b * m.g;
+			real t14 = m.c * m.g;
+
+			// Calculate the determinant
+			real t16 = (t4*m.i - t6*m.h - t8*m.i +
+				t10*m.h + t12*m.f - t14*m.e);
+
+			// Make sure the determinant is non-zero.
+			if (t16 == (real)0.0f) return;
+			real t17 = 1 / t16;
+
+			a = (m.e * m.i - m.f * m.h)*t17;
+			b = -(m.b * m.i - m.c * m.h)*t17;
+			c = (m.b * m.f - m.c * m.e)*t17;
+			d = -(m.d * m.i - m.f * m.g)*t17;
+			e = (m.a * m.i - t14)*t17;
+			f = -(t6 - t10)*t17;
+			g = (m.d * m.h - m.e * m.g)*t17;
+			h = -(m.a * m.h - t12)*t17;
+			i = (t4 - t8)*t17;
+
         }
 
 		void transposeOf(const Matrix3 &m){
@@ -237,9 +239,18 @@ namespace physics{
 		static Matrix3 linearInterpolate(const Matrix3& a, const Matrix3& b, real prop) {
 			Matrix3 result;
 			for (unsigned i = 0; i < 9; i++) {
-				result.cells[i] = a.cells[i] * (1 - prop) + b.cells[i] * prop;
+				result.data[i] = a.data[i] * (1 - prop) + b.data[i] * prop;
 			}
 			return result;
+		}
+
+		friend std::ostream& operator<<(std::ostream& out, const Matrix3 m) {
+			for (int i = 0; i < 9; i++) {
+				if(i % 3 == 0) out << std::endl;
+				out << m.data[i] << " ";
+				
+			}
+			return out;
 		}
 
     };
