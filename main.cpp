@@ -90,8 +90,8 @@ int main(int argc, char * argv[])
  */
 
 #include "Matrix4.h"
-#include <glm\glm.hpp>
-#include <glm\gtc\type_ptr.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 int main() {
 	using namespace physics;
@@ -120,12 +120,24 @@ int main() {
 	IM.inverseOf(M);
 
 	Matrix4 M2 = M * IM;
-
+    
+    cout << "Mine:" << endl;
 	cout << M << endl << endl;
+    
+     cout << "Mine: inverse" << endl;
 	cout << IM << endl << endl;
+    
+     cout << "Mine: M * M-1" << endl;
 	cout << M2 << endl << endl;
+    
+     cout << "glm: inverse" << endl;
+    cout << Matrix4(glm::value_ptr(im)) << endl;
 
+    cout << "glm m * m-1:" << endl;
 	cout << Matrix4(glm::value_ptr(m2)) << endl;
+    
+    cout << M.determinant() << endl;
+    cout << determinant(m) << endl;
 	cin.get();
 	return 0;
 }

@@ -203,7 +203,7 @@ namespace physics{
 		}
 
 		void inverseOf(const Matrix4& m) {
-			real det = determinant();
+			real det = m;
 			if (det == 0) return;
 			det = ((real)1.0) / det;
 
@@ -237,7 +237,8 @@ namespace physics{
 				+ m.a*m.j*m.h
 				+ m.e*m.b*m.l
 				- m.a*m.f*m.l)*det;
-
+
+
 		}
 
 		friend std::ostream& operator<<(std::ostream& out, const Matrix4 m) {
