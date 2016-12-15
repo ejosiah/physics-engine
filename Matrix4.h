@@ -10,7 +10,7 @@
 #define opengl_Matrix4_h
 
 #include "vector.h"
-#include "Quarternion.h"
+#include "Quaternion.h"
 
 namespace physics{
     
@@ -68,6 +68,13 @@ namespace physics{
                 
             }
         }
+
+		void setDiagonal(real d0, real d1, real d2)
+		{
+			a = d0;
+			f = d1;
+			k = d2;
+		}
         
         Matrix4 operator*(const Matrix4& m1){
             return {
@@ -113,7 +120,7 @@ namespace physics{
         }
         
         Vector operator*(const Vector& v) const {
-            return Vector{
+            return {
                 a * v.x + b * v.y + c * v.z + d,
                 e * v.x + f * v.y + g * v.z + h,
                 i * v.x + j * v.y + k * v.z + l,
@@ -163,19 +170,19 @@ namespace physics{
         }
 
 		operator real() const {
-			return -data[8] * data[5] * data[2] +
-				data[4] * data[9] * data[2] +
-				data[8] * data[1] * data[6] -
-				data[0] * data[9] * data[6] -
-				data[4] * data[1] * data[10] +
-				data[0] * data[5] * data[10];
+			return -i * f * c +
+				e * j * c +
+				i * b * g -
+				a * j * g -
+				e * b * k +
+				a * f * k;
 		};
 
 		real determinant() const {
 			return (real)*this;
 		}
 		
-		void setOrientationAndPos(const Quarternion& q, const Vector& pos)
+		void setOrientationAndPos(const Quaternion& q, const Vector& pos)
 		{
 			a = 1 - (2 * q.j*q.j + 2 * q.k*q.k);
 			b = 2 * q.i*q.j + 2 * q.k*q.r;
@@ -198,36 +205,36 @@ namespace physics{
 			if (det == 0) return;
 			det = ((real)1.0) / det;
 
-			data[0] = (-m.data[9] * m.data[6] + m.data[5] * m.data[10])*det;
-			data[4] = (m.data[8] * m.data[6] - m.data[4] * m.data[10])*det;
-			data[8] = (-m.data[8] * m.data[5] + m.data[4] * m.data[9])*det;
+			a = (-m.j * m.g + m.f * m.k)*det;
+			e = (m.i * m.g - m.e * m.k)*det;
+			i = (-m.i * m.f + m.e * m.j)*det;
 
-			data[1] = (m.data[9] * m.data[2] - m.data[1] * m.data[10])*det;
-			data[5] = (-m.data[8] * m.data[2] + m.data[0] * m.data[10])*det;
-			data[9] = (m.data[8] * m.data[1] - m.data[0] * m.data[9])*det;
+			b = (m.j * m.c - m.b * m.k)*det;
+			f = (-m.i * m.c + m.a * m.k)*det;
+			j = (m.i * m.b - m.a * m.j)*det;
 
-			data[2] = (-m.data[5] * m.data[2] + m.data[1] * m.data[6])*det;
-			data[6] = (+m.data[4] * m.data[2] - m.data[0] * m.data[6])*det;
-			data[10] = (-m.data[4] * m.data[1] + m.data[0] * m.data[5])*det;
+			c = (-m.f * m.c + m.b * m.g)*det;
+			g = (+m.e * m.c - m.a * m.g)*det;
+			k = (-m.e * m.b + m.a * m.f)*det;
 
-			data[3] = (m.data[9] * m.data[6] * m.data[3]
-				- m.data[5] * m.data[10] * m.data[3]
-				- m.data[9] * m.data[2] * m.data[7]
-				+ m.data[1] * m.data[10] * m.data[7]
-				+ m.data[5] * m.data[2] * m.data[11]
-				- m.data[1] * m.data[6] * m.data[11])*det;
-			data[7] = (-m.data[8] * m.data[6] * m.data[3]
-				+ m.data[4] * m.data[10] * m.data[3]
-				+ m.data[8] * m.data[2] * m.data[7]
-				- m.data[0] * m.data[10] * m.data[7]
-				- m.data[4] * m.data[2] * m.data[11]
-				+ m.data[0] * m.data[6] * m.data[11])*det;
-			data[11] = (m.data[8] * m.data[5] * m.data[3]
-				- m.data[4] * m.data[9] * m.data[3]
-				- m.data[8] * m.data[1] * m.data[7]
-				+ m.data[0] * m.data[9] * m.data[7]
-				+ m.data[4] * m.data[1] * m.data[11]
-				- m.data[0] * m.data[5] * m.data[11])*det;
+			d = (m.j * m.g * m.d
+				- m.f * m.k * m.d
+				- m.j * m.c * m.h
+				+ m.b * m.k * m.h
+				+ m.f * m.c * m.l
+				- m.b * m.g * m.l)*det;
+			h = (-m.i * m.g * m.d
+				+ m.e * m.k * m.d
+				+ m.i * m.c * m.h
+				- m.a * m.k * m.h
+				- m.e * m.c * m.l
+				+ m.a * m.g * m.l)*det;
+			l = (m.i * m.f * m.d
+				- m.e * m.j * m.d
+				- m.i * m.b * m.h
+				+ m.a * m.j * m.h
+				+ m.e * m.b * m.l
+				- m.a * m.f * m.l)*det;
 		}
 
     };

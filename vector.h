@@ -77,6 +77,10 @@ namespace physics {
         Vector operator-(const Vector& v) const{
             return Vector(x - v.x, y - v.y, z - v.z);
         }
+
+		Vector compProduct(const Vector& v) const {
+			return Vector(x * v.x, y * v.y, z * v.z);
+		}
         
         Vector& operator*=(real s){
             x *= s;
