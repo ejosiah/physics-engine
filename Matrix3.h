@@ -145,8 +145,9 @@ namespace physics{
             return res;
         }
         
-        void invert(){
+        Matrix3& invert(){
             inverseOf(*this);
+			return *this;
         }
 
 		Vector getRowVector(int i) const {

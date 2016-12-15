@@ -241,6 +241,13 @@ namespace physics{
 
 		}
 
+		Matrix4& invert() {
+			Matrix4 temp;
+			temp.inverseOf(*this);
+			*this = temp;
+			return *this;
+		}
+
 		friend std::ostream& operator<<(std::ostream& out, const Matrix4 m) {
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; j < 4; j++) {

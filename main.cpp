@@ -89,7 +89,7 @@ int main(int argc, char * argv[])
 
  */
 
-#include "Matrix4.h"
+#include "core.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -98,46 +98,22 @@ int main() {
 	using namespace std;
 	using namespace glm;
 
-	mat4 m{ 
-		2.0f, 0.0f, -1.0f, 0.0f, 
-		0.0f, 1.0f, 5.0f, 1.0f, 
-		-1.0f, 3.0f, -2.0f, 0.0f, 
-		0.0f, 0.0f, 0.0f, 1.0f };
+	Vector v{ 1, 2, 3 };
 
-	mat4 im = inverse(m);
+	Matrix4 R = rotateY(30);
 
-	mat4 m2 = m * im;
+	v = R * v;
 
+	cout << v << endl;
 
-	Matrix4 M = {
-		{2, 0, -1, 0},
-		{0, 1, 5, 1},
-		{-1, 3, -2, 0},
-		{0, 0, 0, 1}
-	};
+	Matrix4 IR;
+	IR.inverseOf(R);
 
-	Matrix4 IM;
-	IM.inverseOf(M);
+	v = R.invert() * v;
 
-	Matrix4 M2 = M * IM;
-    
-    cout << "Mine:" << endl;
-	cout << M << endl << endl;
-    
-     cout << "Mine: inverse" << endl;
-	cout << IM << endl << endl;
-    
-     cout << "Mine: M * M-1" << endl;
-	cout << M2 << endl << endl;
-    
-     cout << "glm: inverse" << endl;
-    cout << Matrix4(glm::value_ptr(im)) << endl;
+	cout << v << endl;
 
-    cout << "glm m * m-1:" << endl;
-	cout << Matrix4(glm::value_ptr(m2)) << endl;
-    
-    cout << M.determinant() << endl;
-    cout << determinant(m) << endl;
+	//vec4 v1 = {1.0f, 1.}
+
 	cin.get();
-	return 0;
 }

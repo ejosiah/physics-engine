@@ -11,7 +11,7 @@
 
 #include "precision.h"
 #include "vector.h"
-#include "Quarternion.h"
+#include "Quaternion.h"
 #include "Matrix3.h"
 #include "Matrix3X4.h"
 #include "Matrix4.h"
