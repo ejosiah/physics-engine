@@ -23,6 +23,8 @@ namespace physics {
     using Velocity = Vector;
     using Acceleration = Vector;
     using Force = Vector;
+	using Torque = Vector;
+	using Point = Vector;
     
     
     Matrix3 IdentityMatrix3{

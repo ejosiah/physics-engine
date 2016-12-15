@@ -13,15 +13,33 @@ namespace physics {
 		Position _position;
 		Velocity _velocity;
 		Vector _angularVelocity;
+		Force _accumulatedForce;
+		Torque _accumulatedTorque;
 
 		Quaternion _orientation;
 		Matrix4 transformMatrix;
 		Matrix3 inverseInertiaTensorWorld;
 		Matrix3 InverseInertiaTensor;
+		bool isAwake;
 
+	protected:
 		void calculateDerivedData() {
 			transformMatrix.setOrientationAndPos(_orientation, _position);
 		}
+
+		void addForce(const Force& force) {
+			_accumulatedForce += force;
+			isAwake = true;
+		}
+
+		void clearAccumulators() {
+			_accumulatedForce.clear();
+			_accumulatedTorque.clear();
+		}
+
+		void addForceAtPoint(const Force& force, const Point& point);
+
+		void addForceAtBodyPoint(const Force& force, const Point& point);
 
 		static void _transformInertiaTensor(Matrix3& iitWorld, const Quaternion& q, const Matrix3& iitBody, const Matrix4& rotmat) {
 			real t4 = rotmat[0] * iitBody[0] +rotmat[1] * iitBody[3] + rotmat[2] * iitBody[6];
