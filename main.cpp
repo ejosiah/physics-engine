@@ -90,6 +90,7 @@ int main(int argc, char * argv[])
  */
 
 #include "core.h"
+#include "RigidBody.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -102,6 +103,7 @@ int main() {
 
 	Matrix4 R = rotateY(30);
 
+	cout << v << endl;
 	v = R * v;
 
 	cout << v << endl;
@@ -109,7 +111,7 @@ int main() {
 	Matrix4 IR;
 	IR.inverseOf(R);
 
-	v = R.invert() * v;
+	v = R.transpose() * v;
 
 	cout << v << endl;
 

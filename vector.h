@@ -24,8 +24,6 @@ namespace physics {
             real data[4];
         };
         
-        friend class Quarternion;
-        
     public:
         Vector(real x = 0, real y = 0, real z = 0, real w = 0):
         x(x), y(y), z(z), w(w){}
@@ -124,7 +122,7 @@ namespace physics {
             return *this;
         }
         
-        real operator[](const char key){
+        real operator[](const char key) const{
             switch(key){
                 case 'x': return x;
                 case 'y': return y;
@@ -132,6 +130,34 @@ namespace physics {
                 default: throw "Illegal argument";
             }
         }
+
+		real& operator[](const char key){
+			switch (key) {
+			case 'x': return x;
+			case 'y': return y;
+			case 'z': return z;
+			default: throw "Illegal argument";
+			}
+		}
+
+		real operator[](const unsigned i) const {
+			switch (i) {
+			case 0: return x;
+			case 1: return y;
+			case 2: return z;
+			default: throw "Illegal argument";
+			}
+		}
+
+		real& operator[](const unsigned i) {
+			switch (i) {
+			case 0: return x;
+			case 1: return y;
+			case 2: return z;
+			default: throw "Illegal argument";
+			}
+		}
+
         
         real dot(const Vector& v) const{
             return x * v.x + y * v.y + z * v.z;

@@ -162,6 +162,7 @@
     <ClInclude Include="..\Quaternion.h" />
     <ClInclude Include="..\RainingBalls.h" />
     <ClInclude Include="..\random.h" />
+    <ClInclude Include="..\RigidBody.h" />
     <ClInclude Include="..\scene.h" />
     <ClInclude Include="..\SceneTest.h" />
     <ClInclude Include="..\Spring.h" />

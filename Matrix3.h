@@ -212,6 +212,13 @@ namespace physics{
 			return *this;
 		}
 
+		real operator[](const int i) const {
+			return data[i];
+		}
+
+		real& operator[](const int i) {
+			return data[i];
+		}
 
 		Matrix3& operator+=(const Matrix3 &o){
 			a += o.a; b += o.b; c += o.c;

@@ -9,9 +9,12 @@
 #ifndef opengl_Matrix4_h
 #define opengl_Matrix4_h
 
+#include <algorithm>
 #include <iostream>
 #include "vector.h"
 #include "Quaternion.h"
+
+
 
 namespace physics{
     
@@ -157,8 +160,12 @@ namespace physics{
 			};
 		}
 
-		_2nd operator[](int i) const {
-			return _2nd(i, 4, data);
+		real operator[](int i) const {
+			return data[i];
+		}
+
+		real& operator[](int i) {
+			return data[i];
 		}
 
 		Vector axisVector(int i) const {
@@ -166,7 +173,7 @@ namespace physics{
 		}
 
         
-        operator real*() {
+        operator const real*() const {
             return data;
         }
 
@@ -248,12 +255,21 @@ namespace physics{
 			return *this;
 		}
 
+		Matrix4& transpose() {
+			std::swap(e, b);
+			std::swap(i, c);
+			std::swap(m, d);
+			std::swap(j, g);
+			std::swap(n, h);
+			std::swap(o, l);
+
+			return *this;
+		}
+
 		friend std::ostream& operator<<(std::ostream& out, const Matrix4 m) {
-			for (int i = 0; i < 4; i++) {
-				for (int j = 0; j < 4; j++) {
-					out << m[i][j] << " ";
-				}
-				out << std::endl;
+			for (int i = 0; i < 16; i++) {
+				if (i % 4 == 0) out << std::endl;
+				out << m[i] << " ";
 			}
 			return out;
 		}
