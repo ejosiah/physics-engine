@@ -33,6 +33,9 @@
 #include "Camera.h"
 #include "contacts.h"
 #include "ParticleWorld.h"
+#include "RigidBody.h"
+#include "SpringForces.h"
+#include "world.h"
 
 using namespace physics;
 int MAX_CONTACTS = 500;

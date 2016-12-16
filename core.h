@@ -9,6 +9,8 @@
 #ifndef openglcoreh
 #define openglcoreh
 
+#include <sstream>
+#include <string>
 #include "precision.h"
 #include "vector.h"
 #include "Quaternion.h"
@@ -39,6 +41,15 @@ namespace physics {
         {0, 0, 1, 0},
         {0, 0, 0, 1}
     };
+    
+    Matrix4 translate(const Vector v){
+        return {
+            {1, 0, 0, v.x},
+            {0, 1, 0, v.y},
+            {0, 0, 1, v.z},
+            {0, 0, 0, 1}
+        };
+    }
     
     Matrix4 rotate(const real angle, const Vector& axis){
         real s = real_sin(angle * DEG_TO_RAD);
@@ -75,6 +86,27 @@ namespace physics {
     }
     
 
+}
+
+physics::Quaternion operator"" _q(const char* literal, size_t n){
+    std::stringstream ss{ literal };
+    physics::real r, i, j, k;
+    ss >> r;
+    ss >> i;
+    ss >> j;
+    ss >> k;
+    
+    return physics::Quaternion{r, i, j, k};
+}
+
+physics::Vector operator"" _v(const char* literal, size_t n){
+    std::stringstream ss{ literal };
+    physics::real x, y, z;
+    ss >> x;
+    ss >> y;
+    ss >> z;
+    
+    return {x, y, z};
 }
 
 #endif

@@ -43,7 +43,6 @@ namespace physics{
         }
         
         Vector operator*(const Vector& v) const {
-            auto self = *this;
             return Vector{
                 a * v.x + b * v.y + c * v.z + d,
                 e * v.x + f * v.y + g * v.z + h,

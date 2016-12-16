@@ -21,7 +21,7 @@ namespace physics{
 		Vector _position;
         Velocity _velocity;
         Acceleration _acceleration;
-        Force accumulatedForce;
+        Force _accumulatedForce;
         real _inverseMass;
         real _damping;
         
@@ -92,12 +92,12 @@ namespace physics{
             _inverseMass = 1/m;
         }
         
-        void addForce(const Vector& force){
-            accumulatedForce += force;
+        virtual void addForce(const Vector& force){
+            _accumulatedForce += force;
         }
         
         Vector accumulatedForces() const {
-            return accumulatedForce;
+            return _accumulatedForce;
         }
         
         real mass() const { return 1/_inverseMass; }
@@ -111,7 +111,7 @@ namespace physics{
         }
         
         
-        void integrate(real time){
+        virtual void integrate(real time){
             
             using namespace std;
             if(_inverseMass <= 0) return;
@@ -120,7 +120,7 @@ namespace physics{
             
             Acceleration acc = _acceleration;
             
-            acc.addScaled(accumulatedForce, _inverseMass);
+            acc.addScaled(_accumulatedForce, _inverseMass);
             
             _velocity.addScaled(acc, time);
             
@@ -128,11 +128,11 @@ namespace physics{
             
 
          
-            clearAccumulator();
+            clearAccumulators();
         }
         
-        void clearAccumulator(){
-            accumulatedForce.clear();
+        virtual void clearAccumulators(){
+            _accumulatedForce.clear();
         }
         
     };

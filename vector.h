@@ -115,9 +115,9 @@ namespace physics {
         }
         
         Vector& normalize(){
-            real l = length();
+            real mag = length();
             
-            *this *= 1/l;
+            *this *= 1/mag;
             
             return *this;
         }
@@ -189,10 +189,11 @@ namespace physics {
             return crossProductUpdate(v);
         }
         
-        void invert(){
+        Vector& invert(){
             x *= -1;
             y *= -1;
             z *= -1;
+            return *this;
         }
         
         Vector& operator-(){
@@ -204,11 +205,12 @@ namespace physics {
             return data;
         }
         
-        void clear(){
+        Vector& clear(){
             x = 0;
             y = 0;
             z = 0;
             w = 0;
+            return *this;
         }
         
         static real angleBetween(Vector a, Vector b){

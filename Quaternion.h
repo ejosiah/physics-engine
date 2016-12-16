@@ -22,6 +22,12 @@ namespace physics {
                 imaginary j;
                 imaginary k;
             };
+            struct{
+                real w;
+                real x;
+                real y;
+                real z;
+            };
             real data[4];
         };
         
@@ -31,6 +37,16 @@ namespace physics {
 		Quaternion(const Vector& v): Quaternion(0, v.x, v.y, v.z){
             
         }
+        
+        Quaternion& operator=(const Quaternion& q){
+            r = q.r;
+            i = q.r;
+            j = q.j;
+            k = q.k;
+            
+            return *this;
+        }
+
         
         void normailize(){
             real d = r * r + i * i + j * j + k * k;
@@ -48,11 +64,23 @@ namespace physics {
             k *= d;
         }
         
+        Quaternion operator*(const Quaternion& q){
+            return Quaternion{
+                r * q.r - i * q.i - j * q.j - k * q.k,
+                r * q.i + i * q.r + j * q.k - k * q.j,
+                r * q.j - i * q.k + j * q.r + k * q.i,
+                r * q.k + i * q.j - j * q.i + k * q.r
+            };
+        }
+        
+        
 		Quaternion& operator*=(const Quaternion& q){
-            r = r * q.r - i * q.i - j * q.j - k * q.k;
-            i = r * q.i + i * q.r + j * q.k - k * q.j;
-            j = r * q.j - i * q.k + j * q.r + k * q.i;
-            k = r * q.k + i * q.j - j * q.i + k * q.r;
+            real r1 = r * q.r - i * q.i - j * q.j - k * q.k;
+            real i1 = r * q.i + i * q.r + j * q.k - k * q.j;
+            real j1 = r * q.j - i * q.k + j * q.r + k * q.i;
+            real k1 = r * q.k + i * q.j - j * q.i + k * q.r;
+            
+            r = r1; i = i1; j = j1; k = k1;
             
             return *this;
         }

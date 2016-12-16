@@ -70,6 +70,8 @@ private:
     real radius = 2;
     real currentTime;
     Gravity* gravity = new Gravity({0, -20, 0});
+    bool zeroG = false;
+    
 public:
     RaningBalls(const char* title):Scene(title){
         using namespace std;
@@ -85,6 +87,7 @@ public:
                 ball.mass(1);
                 ball.damping(0.99);
                 ball.position({x, 200, -z});
+                ball.acceleration({0, 0.1, 0});
                 clouds[i][j][0] = ball;
                 x += 2 * r + 0.05;
             }
@@ -103,7 +106,9 @@ public:
                 int c = RNG._int(col - 1);
                 int n = RNG._int(nBalls - 1);
                 
-                world.forceRegistry() + Registration{clouds[r][c][n], *gravity};
+                if(!zeroG){
+                    world.forceRegistry() + Registration{clouds[r][c][n], *gravity};
+                }
                 
                 if(!clouds[r][c][n].onScene){
                     addObject(&clouds[r][c][n]);
@@ -122,10 +127,29 @@ public:
     virtual void display() override {
         glTranslatef(-(row * radius), 0, (col * radius));
         Scene::display();
+        if(zeroG){
+            renderText(10, 10, "Zero Gravity active");
+        }
     }
     
     virtual void onKeyPress(unsigned char key, int x, int y) override{
         using namespace std;
+        if(key == 'g'){
+            for(int i = 0; i < row; i++){
+                for(int j = 0; j < col; j++){
+                    if(zeroG){
+                        if(clouds[i][j][0].onScene){
+                            world.forceRegistry() + Registration{clouds[i][j][0], *gravity};
+                        }
+                    }else{
+                        if(clouds[i][j][0].onScene){
+                            world.forceRegistry() - Registration{clouds[i][j][0], *gravity};
+                        }
+                    }
+                }
+            }
+            zeroG = !zeroG;
+        }
     }
     
     virtual void onMouseDown(int button, int state, int x, int y) override{

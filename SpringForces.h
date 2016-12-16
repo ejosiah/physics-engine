@@ -9,34 +9,54 @@
 #ifndef opengl_SpringForces_h
 #define opengl_SpringForces_h
 
+#include <memory>
+#include "core.h"
 #include "forces.h"
+#include "RigidBody.h"
 
 namespace physics {
     
-    class SpringForce :public Force{
+    class SpringForce : public ForceGenerator{
     protected:
+        Position connectionPoint;
+        Position otherConnectionPoint;
         Particle& other;
         real springConstant;
         real restLength;
         
     public:
-        SpringForce(Particle& p, real k, real l)
-        :other(p), springConstant(k), restLength(l){ }
+        SpringForce(const Position& cp, const Position& ocp, Particle& p, real k, real l)
+        :connectionPoint(cp), otherConnectionPoint(ocp),
+        other(p), springConstant(k), restLength(l){ }
         
         virtual void apply(Particle& p, real time) override{
-            Vector pos = p.position() - other.position();
+            
+            Vector pos = getPos(p);
             real d = pos.length();
             real k = springConstant;
             real l = restLength;
+            pos.normalize();
             
             Vector force =  pos * (-k * (d - l));
             
             p.addForce(force);
 
         }
+        
+        Vector getPos(Particle& p){
+            try{
+                RigidBody& rb = dynamic_cast<RigidBody&>(p);
+                RigidBody& rbo = dynamic_cast<RigidBody&>(other);
+                Vector lws = rb.pointInWorldSpace(connectionPoint);
+                Vector ows = rbo.pointInWorldSpace(otherConnectionPoint);
+                return lws - ows;
+            }catch(std::bad_cast& e){
+                return p.position() - other.position();
+            }
+        }
     };
     
-    class AnchoredSpringForce : public Force{
+    class AnchoredSpringForce : public ForceGenerator{
     protected:
         Vector& anchor;
         real springConstant;
@@ -58,6 +78,7 @@ namespace physics {
             
             p.addForce(force);
         }
+        
     };
     
 }

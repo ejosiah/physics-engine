@@ -60,7 +60,7 @@ namespace physics{
         
         void startFrame(){
             for(auto p : _partices){
-                p->clearAccumulator();
+                p->clearAccumulators();
             }
             _contacts.clear();
         }
