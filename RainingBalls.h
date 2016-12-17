@@ -74,6 +74,7 @@ private:
     
 public:
     RaningBalls(const char* title):Scene(title){
+
         using namespace std;
         float r = radius;
         real w = r * row;
@@ -93,6 +94,8 @@ public:
             }
             x = 0;
             z += 2 * r + 1;
+            world.contactGenerators().push_back(&sphericalContact);
+            world.contactGenerators().push_back(&groundContact);
         }
     }
     

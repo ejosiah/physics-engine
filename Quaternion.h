@@ -40,7 +40,7 @@ namespace physics {
         
         Quaternion& operator=(const Quaternion& q){
             r = q.r;
-            i = q.r;
+            i = q.i;
             j = q.j;
             k = q.k;
             

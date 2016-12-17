@@ -37,6 +37,14 @@
 #include "SpringForces.h"
 #include "world.h"
 
+
+void glMutiMat(Matrix4& m){
+    m.transpose();
+    glMultMatrixf(m);
+    m.transpose();
+}
+
+
 using namespace physics;
 int MAX_CONTACTS = 500;
 ParticleWorld world{ MAX_CONTACTS };
@@ -88,9 +96,6 @@ public:
         FreeCamera* camera{ new FreeCamera() };
         camera->setup(Projection{fov, (float)w/h, 1, 1000}, Vector{80, 20, 60}, 100.0);
         mouse = MouseHandler(camera);
-        world.contactGenerators().push_back(&sphericalContact);
-        world.contactGenerators().push_back(&groundContact);
-        
         this->camera = camera;
     }
     
@@ -125,13 +130,18 @@ public:
     }
     
     void drawCrosshairs(){
+        glLineWidth(2.5);
         glBegin(GL_LINES);
         glColor3f(1, 0, 0);
-        glVertex3f(-cl, 0, 0);
+        glVertex3f(0, 0, 0);
         glVertex3f(cl, 0, 0);
-        glVertex3f(0, -cl, 0);
+        
+        glColor3f(0, 1, 0);
+        glVertex3f(0, 0, 0);
         glVertex3f(0, cl, 0);
-        glVertex3f(0, 0, -cl);
+        
+        glColor3f(0, 0, 1);
+        glVertex3f(0, 0, 0);
         glVertex3f(0, 0, cl);
         glEnd();
     }
@@ -210,7 +220,12 @@ public:
 		markedObjects.clear();
 	}
     
-    void renderText(float x, float y, const char *text, void* font=nullptr){
+    void renderText(float x, float y, const char *text, const real* color = nullptr, void* font=nullptr){
+        if(!color){
+            glColor3f(0, 0, 0);
+        }else{
+            glColor3fv(color);
+        }
         glDisable(GL_DEPTH_TEST);
         
         // Temporarily set up the view in orthographic projection.

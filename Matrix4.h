@@ -30,21 +30,6 @@ namespace physics{
             real data[16];
         };
 
-	private:
-		class _2nd {
-		private:
-			int i, offset;
-			const real* data;
-
-		public:
-			_2nd(int i, int off, const real* d) : i(i), offset(off), data(d) {}
-
-			real operator[](int j) {
-				return data[i * offset + j];
-			}
-
-		};
-
     public:
 		Matrix4() {
 			b = c = d = e = g
@@ -56,6 +41,13 @@ namespace physics{
         Matrix4(const real* d){
             for(int i = 0; i < 16; i++){
                 data[i] = d[i];
+            }
+        }
+        
+        Matrix4(std::initializer_list<real> list){
+            auto itr = list.begin();
+            for(int i = 0; i < 16; i++, itr++){
+                data[i] = *itr;
             }
         }
         
@@ -71,6 +63,10 @@ namespace physics{
                 row++;
                 
             }
+        }
+        
+        Matrix4(const Quaternion& q):Matrix4(){
+            rotate(q);
         }
 
 		void setDiagonal(real d0, real d1, real d2)
@@ -177,6 +173,7 @@ namespace physics{
             return data;
         }
 
+
 		operator real() const {
 			return         
 				-i*f*c +
@@ -208,6 +205,21 @@ namespace physics{
 			k = 1 - (2 * q.i*q.i + 2 * q.j*q.j);
 			l = pos.z;
 		}
+        
+        Matrix4& rotate(const Quaternion& q){
+            a = 1 - (2 * q.j*q.j + 2 * q.k*q.k);
+            b = 2 * q.i*q.j + 2 * q.k*q.r;
+            c = 2 * q.i*q.k - 2 * q.j*q.r;
+            
+            e = 2 * q.i*q.j - 2 * q.k*q.r;
+            f = 1 - (2 * q.i*q.i + 2 * q.k*q.k);
+            g = 2 * q.j*q.k + 2 * q.i*q.r;
+            
+            i = 2 * q.i*q.k + 2 * q.j*q.r;
+            j = 2 * q.j*q.k - 2 * q.i*q.r;
+            k = 1 - (2 * q.i*q.i + 2 * q.j*q.j);
+            return *this;
+        }
 
 		void inverseOf(const Matrix4& m) {
 			real det = m;
